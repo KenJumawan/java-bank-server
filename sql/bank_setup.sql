@@ -1,0 +1,64 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
+        'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- STUDENTS: Find-and-replace-all "pdj1404banklab" with your username to use your private schema/database.
+
+-- -----------------------------------------------------
+-- Schema pdj1404banklab
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS pdj1404banklab DEFAULT CHARACTER SET utf8;
+USE pdj1404banklab;
+
+DROP TABLE IF EXISTS pdj1404banklab.TRANSACTION_RECORD;
+DROP TABLE IF EXISTS pdj1404banklab.CUSTOMER;
+
+-- -----------------------------------------------------
+-- Table pdj1404banklab.CUSTOMER
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS CUSTOMER;
+CREATE TABLE pdj1404banklab.CUSTOMER
+(
+    CUS_UNAME   VARCHAR(45)    NOT NULL,
+    CUS_PASSWD  VARCHAR(255)   NOT NULL,
+    CUS_BALANCE DECIMAL(15, 2) NOT NULL DEFAULT 0.0,
+    PRIMARY KEY (CUS_UNAME),
+    UNIQUE INDEX CUS_UNAME_UNIQUE (CUS_UNAME ASC) VISIBLE
+)
+    ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table pdj1404banklab.TRANSACTION_RECORD
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS TRANSACTION_RECORD;
+CREATE TABLE pdj1404banklab.TRANSACTION_RECORD
+(
+    TXN_ID        INT         NOT NULL AUTO_INCREMENT,
+    CUS_ID_SOURCE VARCHAR(45) NULL,
+    CUS_ID_DEST   VARCHAR(45) NULL,
+    TXN_AMOUNT    DECIMAL(15, 2) NOT NULL,
+    TXN_DATETIME  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (TXN_ID),
+    INDEX fk_TRANSACTION_CUSTOMER_idx (CUS_ID_SOURCE ASC) VISIBLE,
+    INDEX fk_TRANSACTION_CUSTOMER1_idx (CUS_ID_DEST ASC) VISIBLE,
+    UNIQUE INDEX TXN_ID_UNIQUE (TXN_ID ASC) VISIBLE,
+    CONSTRAINT fk_TRANSACTION_CUSTOMER
+        FOREIGN KEY (CUS_ID_SOURCE)
+            REFERENCES pdj1404banklab.CUSTOMER (CUS_UNAME)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    CONSTRAINT fk_TRANSACTION_CUSTOMER1
+        FOREIGN KEY (CUS_ID_DEST)
+            REFERENCES pdj1404banklab.CUSTOMER (CUS_UNAME)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+)
+    ENGINE = InnoDB;
+
+--SET SQL_MODE = @OLD_SQL_MODE;
+--SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
+--SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
